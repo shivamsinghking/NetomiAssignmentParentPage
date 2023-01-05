@@ -1,0 +1,73 @@
+<html>
+  <head>
+    <title>IFrame Parent Window</title>
+    <style>
+      body {
+        justify-content: center;
+        text-align: center;
+      }
+      iframe {
+        border: 1px solid red;
+      }
+    </style>
+  </head>
+
+  <body onload="sendToChild()">
+    <iframe
+      id="inlineFrameExample"
+      title="Inline Frame Example"
+      width="400"
+      height="600"
+      src="http://localhost:3000/"
+    >
+    </iframe>
+    <h3 id="message-from-child"></h3>
+    <script>
+      window.addEventListener("message", (e) => {
+        console.log(e.data);
+        document.getElementById('message-from-child').innerHTML = e.data
+      });   
+
+      const check = [
+        {
+          field: "username",
+          validator: [
+            { required: true },
+            { checkLength: true, min: 4, max: 10 },
+            {isNumber: false}
+          ],
+        },
+        {
+          field: "email",
+          validator: [{ required: true }],
+        },
+        {
+          field: "contactNumber",
+          validator: [
+            {required: true},
+            {checkLength: true, min: 10, max: 10}
+         ]
+        },
+        {
+          field: "country",
+          validator: [{ required: true }],
+        },
+        {
+          field: "state",
+          validator: [{ required: true }],
+        },
+      ];
+
+      const sendToChild = () => {
+        console.log(" child ");
+        const iFrameEle = document.getElementById("inlineFrameExample");
+        if (iFrameEle.contentWindow) {
+          iFrameEle.contentWindow.postMessage(JSON.stringify(check), "*");
+        } else {
+          window.setTimeout(sendToChild, 100);
+          console.log("iFrame not loaded");
+        }
+      };
+    </script>
+  </body>
+</html>
